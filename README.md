@@ -1,134 +1,135 @@
-# 🌐 Azure High-Availability Web Infrastructure
+# 🌐 Azure High Availability Web Infrastructure
 
-### Implementing Load Balanced Architecture with Windows Server 2025
+## 🚀 Project Overview
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Cloud-Microsoft%20Azure-0078D4?style=for-the-badge&logo=microsoftazure&logoColor=white" />
-  <img src="https://img.shields.io/badge/OS-Windows%20Server%202025-0078D6?style=for-the-badge&logo=windows&logoColor=white" />
-  <img src="https://img.shields.io/badge/Automation-PowerShell-5391FE?style=for-the-badge&logo=powershell&logoColor=white" />
-  <img src="https://img.shields.io/badge/Project-Completed-brightgreen?style=for-the-badge" />
-</p>
+This project demonstrates how to design and deploy a **Highly Available Web Infrastructure in Microsoft Azure** using:
 
----
+- Azure Standard Load Balancer
+- Windows Server 2025
+- Availability Sets
+- IIS Web Servers
+- PowerShell Automation
 
-# 📚 Table of Contents
-
-- [📌 Project Overview](#-project-overview)
-- [🏗️ Architecture](#️-architecture)
-- [☁️ Infrastructure Components](#️-infrastructure-components)
-- [🔁 High Availability Strategy](#-high-availability-strategy)
-- [⚙️ Load Balancer Configuration](#️-load-balancer-configuration)
-- [💻 Web Server Deployment](#-web-server-deployment)
-- [🧪 Testing Load Balancing](#-testing-load-balancing)
-- [📷 Project Screenshots](#-project-screenshots)
-- [📊 Infrastructure Summary](#-infrastructure-summary)
-- [🚀 Future Improvements](#-future-improvements)
-- [🎓 Learning Outcomes](#-learning-outcomes)
-- [🧑‍💻 Author](#-author)
-- [⭐ Support](#-support)
+The architecture ensures **fault tolerance and traffic distribution** by eliminating **Single Points of Failure (SPOF)**.
 
 ---
 
-# 📌 Project Overview
+# 🏗 Architecture
 
-This project demonstrates how to build a **Highly Available Web Infrastructure in Microsoft Azure** using:
+![Architecture](images/architecture.png)
 
-- **Azure Standard Load Balancer**
-- **Windows Server 2025**
-- **Availability Sets**
-- **PowerShell Automation**
+### Traffic Flow
 
-The architecture eliminates **Single Points of Failure (SPOF)** by distributing traffic across multiple backend servers.
-
-### 🎯 Project Objectives
-
-- Deploy multiple IIS Web Servers  
-- Configure Azure Load Balancer  
-- Implement High Availability using Fault Domains  
-- Automate deployment using PowerShell  
-- Verify traffic distribution and failover  
+Client Request → Public IP → Azure Load Balancer → Web Servers
 
 ---
 
-# 🏗️ Architecture
+# ☁ Infrastructure Components
 
-The following architecture shows how user traffic flows through the Azure infrastructure.
-
-![Architecture Diagram](./Gemini_Generated_Image_d9q905d9q905d9q9.jpg)
-
----
-
-# ☁️ Infrastructure Components
-
-| Resource | Description |
-|--------|-------------|
-| **Virtual Network** | Private network for Azure resources |
-| **Subnet** | Network segmentation for isolation |
-| **Availability Set** | Provides VM redundancy |
-| **Load Balancer** | Distributes traffic across servers |
-| **Public IP** | Entry point for external users |
-| **Network Security Group** | Controls inbound/outbound traffic rules |
-| **Windows Server VMs** | Hosts the IIS Web Service |
+| Resource | Purpose |
+|--------|--------|
+| Virtual Network | Private Azure networking |
+| Subnet | Network segmentation |
+| Availability Set | VM redundancy |
+| Azure Load Balancer | Traffic distribution |
+| Public IP | Internet entry point |
+| Windows Server VMs | Hosting IIS |
 
 ---
 
-# 🔁 High Availability Strategy
+# 🖥 Creating the Virtual Machines
 
-Both web servers are deployed in an **Azure Availability Set**. This ensures that:
+Two Windows Server VMs were deployed inside an **Availability Set** to ensure high availability.
 
-- VMs are placed in **separate fault domains** (protection against hardware failure)
-- Updates occur in **different update domains** (protection during maintenance)
+![Availability Set](images/availability-set.png)
 
-### Distribution Details
+Configuration:
 
-| Configuration | Value |
-|-------------|------|
+| Setting | Value |
+|------|------|
 | Fault Domains | 2 |
 | Update Domains | 5 |
 
-![Availability Set Configuration](./set%20availability.png)
-
 ---
 
-# ⚙️ Load Balancer Configuration
+# ⚙ Creating the Azure Load Balancer
 
-The **Azure Standard Load Balancer** acts as the traffic orchestrator.
+The Azure Standard Load Balancer distributes incoming traffic across backend servers.
+
+![Load Balancer Creation](images/load-balancer-create.png)
+
+Configuration:
 
 | Setting | Value |
-|-------|------|
-| **Frontend IP** | LB-Public-IP |
-| **Backend Pool** | Web-Servers-Pool (VM Interfaces) |
-| **Health Probe** | TCP Port 80 (Health Monitoring) |
-| **Load Rule** | Port 80 → Port 80 (HTTP) |
-| **Session Persistence** | Disabled (Round-Robin) |
+|------|------|
+| Name | Secure-App-LB |
+| Type | Public |
+| SKU | Standard |
 
 ---
 
-# 💻 Web Server Deployment
+# 🌐 Frontend IP Configuration
 
-Each VM hosts an **IIS Web Server** installed using **PowerShell**.
+A Public IP address is assigned as the entry point for internet traffic.
 
-### 🖥️ Web Server 01 Setup
+![Frontend IP](images/frontend-ip-config.png)
+
+---
+
+# 🖥 Backend Pool Configuration
+
+Both virtual machines are added to the backend pool.
+
+![Backend Pool](images/backend-pool.png)
+
+Backend Servers:
+
+| Server | Private IP |
+|------|------|
+| Web-Server-01 | 172.16.0.4 |
+| Web-Server-02 | 172.16.1.4 |
+
+---
+
+# 🔁 Load Balancing Rule
+
+Traffic is distributed using an inbound rule.
+
+![Inbound Rule](images/inbound-rule.png)
+
+| Setting | Value |
+|------|------|
+| Protocol | TCP |
+| Frontend Port | 80 |
+| Backend Port | 80 |
+| Session Persistence | Disabled |
+
+---
+
+# 💻 Installing IIS using PowerShell
+
+IIS was installed using **Azure Run Command**.
+
+![Run Command](images/run-command.png)
+
+PowerShell Script:
 
 ```powershell
 Install-WindowsFeature -name Web-Server -IncludeManagementTools
-
-Set-Content -Path "C:\inetpub\wwwroot\iisstart.htm" -Value "<h1>Welcome to Web Server 01</h1>"
 ```
 
-### 🖥️ Web Server 02 Setup
+Custom landing page created for each server.
 
 ```powershell
-Install-WindowsFeature -name Web-Server -IncludeManagementTools
-
-Set-Content -Path "C:\inetpub\wwwroot\iisstart.htm" -Value "<h1>Welcome to Web Server 02</h1>"
+Set-Content -Path "C:\inetpub\wwwroot\iisstart.htm" `
+-Value "<h1>Welcome to Web Server 01</h1>"
 ```
 
 ---
 
-# 🧪 Testing Load Balancing
+# 🧪 Load Balancer Testing
 
-After deployment, access the Load Balancer Public IP.
+After deployment, accessing the Load Balancer public IP distributes traffic between both servers.
 
 Example:
 
@@ -136,24 +137,21 @@ Example:
 http://20.105.34.114
 ```
 
-### Expected Result
+![Server Output](images/web-server-output.png)
 
-Refreshing the page will alternate between the servers, confirming successful traffic distribution.
+Refreshing the page alternates between:
 
----
+- Web Server 01
+- Web Server 02
 
-# 📷 Project Screenshots
-
-- Backend Pool Mapping  
-- Load Balancer Rule Configuration  
-- Remote PowerShell Execution (Run Command)
+![Load Balance Test](images/load-balance-test.png)
 
 ---
 
 # 📊 Infrastructure Summary
 
-| Resource | Quantity |
-|--------|--------|
+| Resource | Count |
+|------|------|
 | Virtual Machines | 2 |
 | Load Balancer | 1 |
 | Public IP | 1 |
@@ -162,29 +160,21 @@ Refreshing the page will alternate between the servers, confirming successful tr
 
 ---
 
-# 🚀 Future Improvements
-
-- [ ] Implement Azure Application Gateway for L7 load balancing  
-- [ ] Enable HTTPS (SSL/TLS) for secure communication  
-- [ ] Integrate Azure Key Vault for certificate management  
-- [ ] Implement Virtual Machine Scale Sets (VMSS) for auto-scaling  
-- [ ] Setup Azure Monitor & Log Analytics for real-time insights  
-
----
-
 # 🎓 Learning Outcomes
 
-- Hands-on experience with Azure Cloud Infrastructure deployment  
-- Deep understanding of Load Balancing (L4) concepts  
-- Implementing High Availability (HA) design patterns  
-- Infrastructure management via PowerShell Automation  
-- Configuring Fault-Tolerant architectures in the cloud  
+Through this project I learned:
+
+- Azure Load Balancing concepts
+- High Availability architecture
+- Infrastructure deployment in Azure
+- PowerShell automation
+- Fault-tolerant system design
 
 ---
 
 # 🧑‍💻 Author
 
-**Amal — CyberLab**
+**Amal Basnayake**
 
 Cloud Engineering | Cybersecurity | Infrastructure Labs
 
