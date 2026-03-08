@@ -56,7 +56,7 @@ Configuration:
 
 The Azure Standard Load Balancer distributes incoming traffic across backend servers.
 
-![Load Balancer Creation](images/load-balancer-create.png)
+![Load Balancer Creation](load-balancer-create.png)
 
 Configuration:
 
@@ -72,7 +72,7 @@ Configuration:
 
 A Public IP address is assigned as the entry point for internet traffic.
 
-![Frontend IP](images/frontend-ip-config.png)
+![Frontend IP](frontend-ip-config.png)
 
 ---
 
@@ -80,7 +80,7 @@ A Public IP address is assigned as the entry point for internet traffic.
 
 Both virtual machines are added to the backend pool.
 
-![Backend Pool](images/backend-pool.png)
+![Backend Pool](backpoolselectVMs.png)
 
 Backend Servers:
 
@@ -95,7 +95,7 @@ Backend Servers:
 
 Traffic is distributed using an inbound rule.
 
-![Inbound Rule](images/inbound-rule.png)
+![Inbound Rule](inboundrule.png)
 
 | Setting | Value |
 |------|------|
@@ -110,7 +110,7 @@ Traffic is distributed using an inbound rule.
 
 IIS was installed using **Azure Run Command**.
 
-![Run Command](images/run-command.png)
+![Run Command](run-command.png)
 
 PowerShell Script:
 
@@ -137,14 +137,14 @@ Example:
 http://20.105.34.114
 ```
 
-![Server Output](images/web-server-output.png)
+![Server Output](finaloutput.png)
 
 Refreshing the page alternates between:
 
 - Web Server 01
 - Web Server 02
 
-![Load Balance Test](images/load-balance-test.png)
+![Load Balance Test](load-balance-test.png)
 
 ---
 
