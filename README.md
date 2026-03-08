@@ -16,7 +16,7 @@ The architecture ensures **fault tolerance and traffic distribution** by elimina
 
 # 🏗 Architecture
 
-![Architecture](images/architecture.png)
+![Architecture](Loadbalance.png)
 
 ### Traffic Flow
 
